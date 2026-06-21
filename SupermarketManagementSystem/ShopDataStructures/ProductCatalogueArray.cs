@@ -46,6 +46,19 @@ namespace SupermarketManagementSystem.ShopDataStructures
             return products[index];
         }
 
+        public Product? SearchByName(string productName)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                if (products[i].Title.ToLower().Contains(productName.ToLower()))
+                {
+                    return products[i];
+                }
+            }
+
+            return null;
+        }
+
         private void ResizeArray()
         {
             Product[] largerArray = new Product[products.Length * 2];

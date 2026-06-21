@@ -41,7 +41,7 @@ namespace SupermarketManagementSystem
                         break;
 
                     case "3":
-                        ShowSectionPlaceholder("Product Search");
+                        ShowProductSearchMenu(productCatalogue);
                         break;
 
                     case "4":
@@ -82,7 +82,7 @@ namespace SupermarketManagementSystem
                 Console.WriteLine("1. View All Products");
                 Console.WriteLine("2. Back to Main Menu");
                 Console.WriteLine();
-                Console.Write("Choose an option (1 - 2): ");
+                Console.Write("Choose an option (1 or 2): ");
 
                 string choice = Console.ReadLine() ?? "";
 
@@ -104,6 +104,77 @@ namespace SupermarketManagementSystem
             }
         }
 
+        static void ShowProductSearchMenu(ProductCatalogueArray productCatalogue)
+        {
+            bool inSearchMenu = true;
+
+            while (inSearchMenu)
+            {
+                Console.Clear();
+
+                Console.WriteLine("PRODUCT SEARCH");
+                Console.WriteLine("==============");
+                Console.WriteLine("1. Search product by name");
+                Console.WriteLine("2. Back to Main Menu");
+                Console.WriteLine();
+                Console.Write("Choose an option (1 or 2): ");
+
+                string choice = Console.ReadLine() ?? "";
+
+                switch (choice)
+                {
+                    case "1":
+                        SearchProductByName(productCatalogue);
+                        break;
+
+                    case "2":
+                        inSearchMenu = false;
+                        break;
+
+                    default:
+                        Console.WriteLine("Invalid choice! Please enter 1 or 2.");
+                        Pause();
+                        break;
+                }
+            }
+        }
+
+        static void SearchProductByName(ProductCatalogueArray productCatalogue)
+        {
+            Console.Clear();
+
+            Console.WriteLine("SEARCH BY PRODUCT NAME");
+            Console.WriteLine("======================");
+            Console.Write("Enter product name: ");
+
+            string productName = Console.ReadLine() ?? "";
+
+            Product? product = productCatalogue.SearchByName(productName);
+
+            Console.WriteLine();
+
+            if (product == null)
+            {
+                Console.WriteLine("No matching product was found.");
+            }
+            else
+            {
+                Console.WriteLine("Product details:");
+                Console.WriteLine($"ID: {product.ProductId}");
+                Console.WriteLine($"Title: {product.Title}");
+                Console.WriteLine($"Barcode: {product.Barcode}");
+                Console.WriteLine($"Brand: {product.Brand}");
+                Console.WriteLine($"Category ID: {product.CategoryId}");
+                Console.WriteLine($"Supplier ID: {product.SupplierId}");
+                Console.WriteLine($"Price: Rs {product.Price}");
+                Console.WriteLine($"Quantity: {product.QuantityInStock}");
+                Console.WriteLine($"Status: {product.StockStatus}");
+                Console.WriteLine($"Restock Date: {product.RestockDate:dd/MM/yyyy}");
+            }
+
+            Pause();
+        }
+
         static void ViewAllProducts(ProductCatalogueArray productCatalogue)
         {
             Console.Clear();
@@ -113,7 +184,7 @@ namespace SupermarketManagementSystem
 
             if (productCatalogue.Count == 0)
             {
-                Console.WriteLine("No products found.");
+                Console.WriteLine("No products were found.");
                 Pause();
                 return;
             }

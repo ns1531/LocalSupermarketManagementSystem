@@ -9,6 +9,7 @@ namespace SupermarketManagementSystem
         static void Main()
         {
             ProductCatalogueArray productCatalogue = CreateSampleProducts();
+            BarcodeIndexTable barcodeIndex = CreateBarcodeIndex(productCatalogue);
 
             bool running = true;
 
@@ -41,7 +42,7 @@ namespace SupermarketManagementSystem
                         break;
 
                     case "3":
-                        ShowProductSearchMenu(productCatalogue);
+                        ShowProductSearchMenu(productCatalogue, barcodeIndex);
                         break;
 
                     case "4":
@@ -104,7 +105,7 @@ namespace SupermarketManagementSystem
             }
         }
 
-        static void ShowProductSearchMenu(ProductCatalogueArray productCatalogue)
+        static void ShowProductSearchMenu(ProductCatalogueArray productCatalogue, BarcodeIndexTable barcodeIndex)
         {
             bool inSearchMenu = true;
 
@@ -115,7 +116,8 @@ namespace SupermarketManagementSystem
                 Console.WriteLine("PRODUCT SEARCH");
                 Console.WriteLine("==============");
                 Console.WriteLine("1. Search product by name");
-                Console.WriteLine("2. Back to Main Menu");
+                Console.WriteLine("2. Search product by barcode");
+                Console.WriteLine("3. Back to Main Menu");
                 Console.WriteLine();
                 Console.Write("Choose an option (1 or 2): ");
 
@@ -128,11 +130,15 @@ namespace SupermarketManagementSystem
                         break;
 
                     case "2":
+                        SearchProductByBarcode(barcodeIndex);
+                        break;
+
+                    case "3":
                         inSearchMenu = false;
                         break;
 
                     default:
-                        Console.WriteLine("Invalid choice! Please enter 1 or 2.");
+                        Console.WriteLine("Invalid input! Please choose a number from 1 to 3.");
                         Pause();
                         break;
                 }
@@ -150,6 +156,42 @@ namespace SupermarketManagementSystem
             string productName = Console.ReadLine() ?? "";
 
             Product? product = productCatalogue.SearchByName(productName);
+
+            Console.WriteLine();
+
+            if (product == null)
+            {
+                Console.WriteLine("No matching product was found.");
+            }
+            else
+            {
+                Console.WriteLine("Product details:");
+                Console.WriteLine($"ID: {product.ProductId}");
+                Console.WriteLine($"Title: {product.Title}");
+                Console.WriteLine($"Barcode: {product.Barcode}");
+                Console.WriteLine($"Brand: {product.Brand}");
+                Console.WriteLine($"Category ID: {product.CategoryId}");
+                Console.WriteLine($"Supplier ID: {product.SupplierId}");
+                Console.WriteLine($"Price: Rs {product.Price}");
+                Console.WriteLine($"Quantity: {product.QuantityInStock}");
+                Console.WriteLine($"Status: {product.StockStatus}");
+                Console.WriteLine($"Restock Date: {product.RestockDate:dd/MM/yyyy}");
+            }
+
+            Pause();
+        }
+
+        static void SearchProductByBarcode(BarcodeIndexTable barcodeIndex)
+        {
+            Console.Clear();
+
+            Console.WriteLine("SEARCH BY BARCODE");
+            Console.WriteLine("=================");
+            Console.Write("Enter product barcode: ");
+
+            string barcode = Console.ReadLine() ?? "";
+
+            Product? product = barcodeIndex.SearchByBarcode(barcode);
 
             Console.WriteLine();
 
@@ -210,6 +252,23 @@ namespace SupermarketManagementSystem
             }
 
             Pause();
+        }
+
+        static BarcodeIndexTable CreateBarcodeIndex(ProductCatalogueArray productCatalogue)
+        {
+            BarcodeIndexTable barcodeIndex = new BarcodeIndexTable();
+
+            for (int i = 0; i < productCatalogue.Count; i++)
+            {
+                Product? product = productCatalogue.GetProductAt(i);
+
+                if (product != null)
+                {
+                    barcodeIndex.AddProduct(product);
+                }
+            }
+
+            return barcodeIndex;
         }
 
         static ProductCatalogueArray CreateSampleProducts()

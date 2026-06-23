@@ -34,7 +34,7 @@ namespace SupermarketManagementSystem
                 switch (choice)
                 {
                     case "1":
-                        ShowProductCatalogueMenu(productCatalogue);
+                        ShowProductCatalogueMenu(productCatalogue, barcodeIndex);
                         break;
 
                     case "2":
@@ -70,7 +70,7 @@ namespace SupermarketManagementSystem
             }
         }
 
-        static void ShowProductCatalogueMenu(ProductCatalogueArray productCatalogue)
+        static void ShowProductCatalogueMenu(ProductCatalogueArray productCatalogue, BarcodeIndexTable barcodeIndex)
         {
             bool inProductMenu = true;
 
@@ -81,9 +81,10 @@ namespace SupermarketManagementSystem
                 Console.WriteLine("PRODUCT CATALOGUE");
                 Console.WriteLine("=================");
                 Console.WriteLine("1. View All Products");
-                Console.WriteLine("2. Back to Main Menu");
+                Console.WriteLine("2. Add Product");
+                Console.WriteLine("3. Back to Main Menu");
                 Console.WriteLine();
-                Console.Write("Choose an option (1 or 2): ");
+                Console.Write("Choose an option (1 - 3): ");
 
                 string choice = Console.ReadLine() ?? "";
 
@@ -94,15 +95,88 @@ namespace SupermarketManagementSystem
                         break;
 
                     case "2":
+                        AddProductToCatalogue(productCatalogue, barcodeIndex);
+                        break;
+
+                    case "3":
                         inProductMenu = false;
                         break;
 
                     default:
-                        Console.WriteLine("Invalid input! Please choose 1 or 2.");
+                        Console.WriteLine("Invalid input! Please choose a number from 1 to 3.");
                         Pause();
                         break;
                 }
             }
+        }
+
+        static void AddProductToCatalogue(ProductCatalogueArray productCatalogue, BarcodeIndexTable barcodeIndex)
+        {
+            Console.Clear();
+
+            Console.WriteLine("ADD PRODUCT");
+            Console.WriteLine("===========");
+            Console.Write("Enter product ID: ");
+            string productId = Console.ReadLine() ?? "";
+
+            if (productCatalogue.SearchByProductId(productId) != null)
+            {
+                Console.WriteLine("Error! A product with this ID already exists.");
+                Pause();
+                return;
+            }
+
+            Console.Write("Enter barcode: ");
+            string barcode = Console.ReadLine() ?? "";
+
+            if (productCatalogue.BarcodeExists(barcode))
+            {
+                Console.WriteLine("Error! A product with this barcode already exists.");
+                Pause();
+                return;
+            }
+
+            Console.Write("Enter title: ");
+            string title = Console.ReadLine() ?? "";
+
+            Console.Write("Enter brand: ");
+            string brand = Console.ReadLine() ?? "";
+
+            Console.Write("Enter category ID: ");
+            string categoryId = Console.ReadLine() ?? "";
+
+            Console.Write("Enter supplier ID: ");
+            string supplierId = Console.ReadLine() ?? "";
+
+            Console.Write("Enter price: ");
+            decimal price = decimal.Parse(Console.ReadLine() ?? "0");
+
+            Console.Write("Enter quantity in stock: ");
+            int quantityInStock = int.Parse(Console.ReadLine() ?? "0");
+
+            Console.Write("Enter low stock threshold: ");
+            int lowStockThreshold = int.Parse(Console.ReadLine() ?? "0");
+
+            Product product = new Product
+            {
+                ProductId = productId,
+                Barcode = barcode,
+                Title = title,
+                Brand = brand,
+                CategoryId = categoryId,
+                SupplierId = supplierId,
+                Price = price,
+                QuantityInStock = quantityInStock,
+                LowStockThreshold = lowStockThreshold,
+                RestockDate = DateTime.Today.AddDays(7)
+            };
+
+            productCatalogue.AddProduct(product);
+            barcodeIndex.AddProduct(product);
+
+            Console.WriteLine();
+            Console.WriteLine("Product was added successfully.");
+            Pause();
         }
 
         static void ShowProductSearchMenu(ProductCatalogueArray productCatalogue, BarcodeIndexTable barcodeIndex)

@@ -82,9 +82,11 @@ namespace SupermarketManagementSystem
                 Console.WriteLine("=================");
                 Console.WriteLine("1. View All Products");
                 Console.WriteLine("2. Add Product");
-                Console.WriteLine("3. Back to Main Menu");
+                Console.WriteLine("3. Update Product");
+                Console.WriteLine("4. Remove Product");
+                Console.WriteLine("5. Back to Main Menu");
                 Console.WriteLine();
-                Console.Write("Choose an option (1 - 3): ");
+                Console.Write("Choose an option (1 - 5): ");
 
                 string choice = Console.ReadLine() ?? "";
 
@@ -99,11 +101,19 @@ namespace SupermarketManagementSystem
                         break;
 
                     case "3":
+                        UpdateProductInCatalogue(productCatalogue);
+                        break;
+
+                    case "4":
+                        RemoveProductFromCatalogue(productCatalogue);
+                        break;
+
+                    case "5":
                         inProductMenu = false;
                         break;
 
                     default:
-                        Console.WriteLine("Invalid input! Please choose a number from 1 to 3.");
+                        Console.WriteLine("Invalid input! Please choose a number from 1 to 5.");
                         Pause();
                         break;
                 }
@@ -176,6 +186,72 @@ namespace SupermarketManagementSystem
 
             Console.WriteLine();
             Console.WriteLine("Product was added successfully.");
+            Pause();
+        }
+
+        static void UpdateProductInCatalogue(ProductCatalogueArray productCatalogue)
+        {
+            Console.Clear();
+
+            Console.WriteLine("UPDATE PRODUCT");
+            Console.WriteLine("==============");
+            Console.Write("Enter product ID to update: ");
+
+            string productId = Console.ReadLine() ?? "";
+
+            Product? product = productCatalogue.SearchByProductId(productId);
+
+            if (product == null)
+            {
+                Console.WriteLine("No product with this ID was found.");
+                Pause();
+                return;
+            }
+
+            Console.WriteLine();
+            Console.WriteLine("Current product details:");
+            Console.WriteLine($"Title: {product.Title}");
+            Console.WriteLine($"Price: Rs {product.Price}");
+            Console.WriteLine($"Quantity: {product.QuantityInStock}");
+            Console.WriteLine();
+
+            Console.Write("Enter new title: ");
+            product.Title = Console.ReadLine() ?? "";
+
+            Console.Write("Enter new price: ");
+            product.Price = decimal.Parse(Console.ReadLine() ?? "0");
+
+            Console.Write("Enter new quantity in stock: ");
+            product.QuantityInStock = int.Parse(Console.ReadLine() ?? "0");
+
+            Console.WriteLine();
+            Console.WriteLine("Product was updated successfully.");
+            Pause();
+        }
+
+        static void RemoveProductFromCatalogue(ProductCatalogueArray productCatalogue)
+        {
+            Console.Clear();
+
+            Console.WriteLine("REMOVE PRODUCT");
+            Console.WriteLine("==============");
+            Console.Write("Enter product ID to remove: ");
+
+            string productId = Console.ReadLine() ?? "";
+
+            bool removed = productCatalogue.RemoveProduct(productId);
+
+            Console.WriteLine();
+
+            if (removed)
+            {
+                Console.WriteLine("Product was removed successfully.");
+            }
+            else
+            {
+                Console.WriteLine("No product with this ID was found.");
+            }
+
             Pause();
         }
 

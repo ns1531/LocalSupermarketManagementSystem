@@ -59,6 +59,51 @@ namespace SupermarketManagementSystem.ShopDataStructures
             return null;
         }
 
+        public Product? SearchByProductId(string productId)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                if (products[i].ProductId == productId)
+                {
+                    return products[i];
+                }
+            }
+
+            return null;
+        }
+
+        public bool BarcodeExists(string barcode)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                if (products[i].Barcode == barcode)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public bool RemoveProduct(string productId)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                if (products[i].ProductId == productId)
+                {
+                    for (int j = i; j < count - 1; j++)
+                    {
+                        products[j] = products[j + 1];
+                    }
+
+                    count--;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         private void ResizeArray()
         {
             Product[] largerArray = new Product[products.Length * 2];

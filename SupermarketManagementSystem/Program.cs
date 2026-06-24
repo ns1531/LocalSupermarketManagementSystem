@@ -325,7 +325,7 @@ namespace SupermarketManagementSystem
                         break;
 
                     case "3":
-                        ShowSectionPlaceholder("View Low-Stock Alerts");
+                        ViewLowStockAlerts(productCatalogue);
                         break;
 
                     case "4":
@@ -402,6 +402,40 @@ namespace SupermarketManagementSystem
 
             Console.WriteLine();
             Console.WriteLine("Stock quantity was updated successfully.");
+            Pause();
+        }
+
+        static void ViewLowStockAlerts(ProductCatalogueArray productCatalogue)
+        {
+            Console.Clear();
+
+            Console.WriteLine("LOW-STOCK ALERTS");
+            Console.WriteLine("================");
+
+            bool lowStockFound = false;
+
+            for (int i = 0; i < productCatalogue.Count; i++)
+            {
+                Product? product = productCatalogue.GetProductAt(i);
+
+                if (product != null && product.QuantityInStock <= product.LowStockThreshold)
+                {
+                    Console.WriteLine($"ID: {product.ProductId}");
+                    Console.WriteLine($"Title: {product.Title}");
+                    Console.WriteLine($"Quantity: {product.QuantityInStock}");
+                    Console.WriteLine($"Low Stock Threshold: {product.LowStockThreshold}");
+                    Console.WriteLine($"Status: {product.StockStatus}");
+                    Console.WriteLine("-----------------------------------");
+
+                    lowStockFound = true;
+                }
+            }
+
+            if (!lowStockFound)
+            {
+                Console.WriteLine("No low-stock products were found.");
+            }
+
             Pause();
         }
 

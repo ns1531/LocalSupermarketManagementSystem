@@ -1,4 +1,5 @@
 ﻿using System;
+
 using SupermarketManagementSystem.ShopData;
 using SupermarketManagementSystem.ShopDataStructures;
 
@@ -308,9 +309,10 @@ namespace SupermarketManagementSystem
                 Console.WriteLine("1. View Stock Status");
                 Console.WriteLine("2. Update Stock Quantity");
                 Console.WriteLine("3. View Low-Stock Alerts");
-                Console.WriteLine("4. Back to Main Menu");
+                Console.WriteLine("4. View Restocking Needs");
+                Console.WriteLine("5. Back to Main Menu");
                 Console.WriteLine();
-                Console.Write("Choose an option (1 - 4): ");
+                Console.Write("Choose an option (1 - 5): ");
 
                 string choice = Console.ReadLine() ?? "";
 
@@ -329,6 +331,10 @@ namespace SupermarketManagementSystem
                         break;
 
                     case "4":
+                        ViewRestockingNeeds(productCatalogue);
+                        break;
+
+                    case "5":
                         inStockMenu = false;
                         break;
 
@@ -434,6 +440,40 @@ namespace SupermarketManagementSystem
             if (!lowStockFound)
             {
                 Console.WriteLine("No low-stock products were found.");
+            }
+
+            Pause();
+        }
+
+        static void ViewRestockingNeeds(ProductCatalogueArray productCatalogue)
+        {
+            Console.Clear();
+
+            Console.WriteLine("RESTOCKING NEEDS");
+            Console.WriteLine("================");
+
+            bool restockingNeeded = false;
+
+            for (int i = 0; i < productCatalogue.Count; i++)
+            {
+                Product? product = productCatalogue.GetProductAt(i);
+
+                if (product != null && product.QuantityInStock <= product.LowStockThreshold)
+                {
+                    Console.WriteLine($"ID: {product.ProductId}");
+                    Console.WriteLine($"Title: {product.Title}");
+                    Console.WriteLine($"Quantity: {product.QuantityInStock}");
+                    Console.WriteLine($"Low Stock Threshold: {product.LowStockThreshold}");
+                    Console.WriteLine($"Restock Date: {product.RestockDate:dd/MM/yyyy}");
+                    Console.WriteLine("-----------------------------------");
+
+                    restockingNeeded = true;
+                }
+            }
+
+            if (!restockingNeeded)
+            {
+                Console.WriteLine("No restocking needs were found.");
             }
 
             Pause();

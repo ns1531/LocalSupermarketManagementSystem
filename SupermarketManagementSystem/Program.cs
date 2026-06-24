@@ -17,7 +17,7 @@ namespace SupermarketManagementSystem
             {
                 Console.Clear();
 
-                Console.WriteLine("LOCAL SUPERMRKET MANAGEMENT SYSTEM");
+                Console.WriteLine("LOCAL SUPERMARKET MANAGEMENT SYSTEM");
                 Console.WriteLine("===================================");
                 Console.WriteLine("1. Product Catalogue");
                 Console.WriteLine("2. Supplier Records");
@@ -316,16 +316,7 @@ namespace SupermarketManagementSystem
             else
             {
                 Console.WriteLine("Product details:");
-                Console.WriteLine($"ID: {product.ProductId}");
-                Console.WriteLine($"Title: {product.Title}");
-                Console.WriteLine($"Barcode: {product.Barcode}");
-                Console.WriteLine($"Brand: {product.Brand}");
-                Console.WriteLine($"Category ID: {product.CategoryId}");
-                Console.WriteLine($"Supplier ID: {product.SupplierId}");
-                Console.WriteLine($"Price: Rs {product.Price}");
-                Console.WriteLine($"Quantity: {product.QuantityInStock}");
-                Console.WriteLine($"Status: {product.StockStatus}");
-                Console.WriteLine($"Restock Date: {product.RestockDate:dd/MM/yyyy}");
+                DisplayProductDetails(product);
             }
 
             Pause();
@@ -352,16 +343,7 @@ namespace SupermarketManagementSystem
             else
             {
                 Console.WriteLine("Product details:");
-                Console.WriteLine($"ID: {product.ProductId}");
-                Console.WriteLine($"Title: {product.Title}");
-                Console.WriteLine($"Barcode: {product.Barcode}");
-                Console.WriteLine($"Brand: {product.Brand}");
-                Console.WriteLine($"Category ID: {product.CategoryId}");
-                Console.WriteLine($"Supplier ID: {product.SupplierId}");
-                Console.WriteLine($"Price: Rs {product.Price}");
-                Console.WriteLine($"Quantity: {product.QuantityInStock}");
-                Console.WriteLine($"Status: {product.StockStatus}");
-                Console.WriteLine($"Restock Date: {product.RestockDate:dd/MM/yyyy}");
+                DisplayProductDetails(product);
             }
 
             Pause();
@@ -387,21 +369,26 @@ namespace SupermarketManagementSystem
 
                 if (product != null)
                 {
-                    Console.WriteLine($"ID: {product.ProductId}");
-                    Console.WriteLine($"Title: {product.Title}");
-                    Console.WriteLine($"Barcode: {product.Barcode}");
-                    Console.WriteLine($"Brand: {product.Brand}");
-                    Console.WriteLine($"Category ID: {product.CategoryId}");
-                    Console.WriteLine($"Supplier ID: {product.SupplierId}");
-                    Console.WriteLine($"Price: Rs {product.Price}");
-                    Console.WriteLine($"Quantity: {product.QuantityInStock}");
-                    Console.WriteLine($"Status: {product.StockStatus}");
-                    Console.WriteLine($"Restock Date: {product.RestockDate:dd/MM/yyyy}");
+                    DisplayProductDetails(product);
                     Console.WriteLine("-----------------------------------");
                 }
             }
 
             Pause();
+        }
+
+        static void DisplayProductDetails(Product product)
+        {
+            Console.WriteLine($"ID: {product.ProductId}");
+            Console.WriteLine($"Title: {product.Title}");
+            Console.WriteLine($"Barcode: {product.Barcode}");
+            Console.WriteLine($"Brand: {product.Brand}");
+            Console.WriteLine($"Category ID: {product.CategoryId}");
+            Console.WriteLine($"Supplier ID: {product.SupplierId}");
+            Console.WriteLine($"Price: Rs {product.Price}");
+            Console.WriteLine($"Quantity: {product.QuantityInStock}");
+            Console.WriteLine($"Status: {product.StockStatus}");
+            Console.WriteLine($"Restock Date: {product.RestockDate:dd/MM/yyyy}");
         }
 
         static BarcodeIndexTable CreateBarcodeIndex(ProductCatalogueArray productCatalogue)
@@ -503,7 +490,7 @@ namespace SupermarketManagementSystem
             Console.Clear();
             Console.WriteLine(sectionName.ToUpper());
             Console.WriteLine("==============================");
-            Console.WriteLine("Test 123");
+            Console.WriteLine("This section is under development.");
             Pause();
         }
 

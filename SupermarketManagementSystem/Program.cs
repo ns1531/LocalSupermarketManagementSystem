@@ -46,7 +46,7 @@ namespace SupermarketManagementSystem
                         break;
 
                     case "4":
-                        ShowSectionPlaceholder("Stock Control");
+                        ShowStockControlMenu(productCatalogue);
                         break;
 
                     case "5":
@@ -293,6 +293,116 @@ namespace SupermarketManagementSystem
                         break;
                 }
             }
+        }
+
+        static void ShowStockControlMenu(ProductCatalogueArray productCatalogue)
+        {
+            bool inStockMenu = true;
+
+            while (inStockMenu)
+            {
+                Console.Clear();
+
+                Console.WriteLine("STOCK CONTROL");
+                Console.WriteLine("=============");
+                Console.WriteLine("1. View Stock Status");
+                Console.WriteLine("2. Update Stock Quantity");
+                Console.WriteLine("3. View Low-Stock Alerts");
+                Console.WriteLine("4. Back to Main Menu");
+                Console.WriteLine();
+                Console.Write("Choose an option (1 - 4): ");
+
+                string choice = Console.ReadLine() ?? "";
+
+                switch (choice)
+                {
+                    case "1":
+                        ViewStockStatus(productCatalogue);
+                        break;
+
+                    case "2":
+                        UpdateStockQuantity(productCatalogue);
+                        break;
+
+                    case "3":
+                        ShowSectionPlaceholder("View Low-Stock Alerts");
+                        break;
+
+                    case "4":
+                        inStockMenu = false;
+                        break;
+
+                    default:
+                        Console.WriteLine("Invalid input! Please choose a number from 1 to 4.");
+                        Pause();
+                        break;
+                }
+            }
+        }
+
+        static void ViewStockStatus(ProductCatalogueArray productCatalogue)
+        {
+            Console.Clear();
+
+            Console.WriteLine("STOCK STATUS");
+            Console.WriteLine("============");
+
+            if (productCatalogue.Count == 0)
+            {
+                Console.WriteLine("No products were found.");
+                Pause();
+                return;
+            }
+
+            for (int i = 0; i < productCatalogue.Count; i++)
+            {
+                Product? product = productCatalogue.GetProductAt(i);
+
+                if (product != null)
+                {
+                    Console.WriteLine($"ID: {product.ProductId}");
+                    Console.WriteLine($"Title: {product.Title}");
+                    Console.WriteLine($"Quantity: {product.QuantityInStock}");
+                    Console.WriteLine($"Low Stock Threshold: {product.LowStockThreshold}");
+                    Console.WriteLine($"Status: {product.StockStatus}");
+                    Console.WriteLine("-----------------------------------");
+                }
+            }
+
+            Pause();
+        }
+
+        static void UpdateStockQuantity(ProductCatalogueArray productCatalogue)
+        {
+            Console.Clear();
+
+            Console.WriteLine("UPDATE STOCK QUANTITY");
+            Console.WriteLine("=====================");
+            Console.Write("Enter product ID: ");
+
+            string productId = Console.ReadLine() ?? "";
+
+            Product? product = productCatalogue.SearchByProductId(productId);
+
+            if (product == null)
+            {
+                Console.WriteLine("No product with this ID was found.");
+                Pause();
+                return;
+            }
+
+            Console.WriteLine();
+            Console.WriteLine($"Product: {product.Title}");
+            Console.WriteLine($"Current Quantity: {product.QuantityInStock}");
+            Console.Write("Enter new quantity: ");
+
+            int newQuantity = int.Parse(Console.ReadLine() ?? "0");
+
+            product.QuantityInStock = newQuantity;
+
+            Console.WriteLine();
+            Console.WriteLine("Stock quantity was updated successfully.");
+            Pause();
         }
 
         static void SearchProductByName(ProductCatalogueArray productCatalogue)

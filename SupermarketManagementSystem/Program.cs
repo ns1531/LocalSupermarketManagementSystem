@@ -133,9 +133,12 @@ namespace SupermarketManagementSystem
                 Console.WriteLine("SUPPLIER RECORDS");
                 Console.WriteLine("================");
                 Console.WriteLine("1. View All Suppliers");
-                Console.WriteLine("2. Back to Main Menu");
+                Console.WriteLine("2. Add Supplier");
+                Console.WriteLine("3. Update Supplier");
+                Console.WriteLine("4. Remove Supplier");
+                Console.WriteLine("5. Back to Main Menu");
                 Console.WriteLine();
-                Console.Write("Choose an option (1 or 2): ");
+                Console.Write("Choose an option (1 - 5): ");
 
                 string choice = Console.ReadLine() ?? "";
 
@@ -146,11 +149,23 @@ namespace SupermarketManagementSystem
                         break;
 
                     case "2":
+                        AddSupplierToRecords(supplierRecords);
+                        break;
+
+                    case "3":
+                        UpdateSupplierInRecords(supplierRecords);
+                        break;
+
+                    case "4":
+                        RemoveSupplierFromRecords(supplierRecords);
+                        break;
+
+                    case "5":
                         inSupplierMenu = false;
                         break;
 
                     default:
-                        Console.WriteLine("Invalid input! Please choose 1 or 2.");
+                        Console.WriteLine("Invalid input! Please choose a number from 1 to 5.");
                         Pause();
                         break;
                 }
@@ -183,6 +198,113 @@ namespace SupermarketManagementSystem
                     Console.WriteLine($"Email: {supplier.Email}");
                     Console.WriteLine("-----------------------------------");
                 }
+            }
+
+            Pause();
+        }
+
+        static void AddSupplierToRecords(SupplierRecordArray supplierRecords)
+        {
+            Console.Clear();
+
+            Console.WriteLine("ADD SUPPLIER");
+            Console.WriteLine("============");
+            Console.Write("Enter supplier ID: ");
+
+            string supplierId = Console.ReadLine() ?? "";
+
+            if (supplierRecords.SearchBySupplierId(supplierId) != null)
+            {
+                Console.WriteLine("Error! A supplier with this ID already exists.");
+                Pause();
+                return;
+            }
+
+            Console.Write("Enter supplier name: ");
+            string supplierName = Console.ReadLine() ?? "";
+
+            Console.Write("Enter contact number: ");
+            string contactNumber = Console.ReadLine() ?? "";
+
+            Console.Write("Enter email: ");
+            string email = Console.ReadLine() ?? "";
+
+            Supplier supplier = new Supplier
+            {
+                SupplierId = supplierId,
+                SupplierName = supplierName,
+                ContactNumber = contactNumber,
+                Email = email
+            };
+
+            supplierRecords.AddSupplier(supplier);
+
+            Console.WriteLine();
+            Console.WriteLine("Supplier was added successfully.");
+            Pause();
+        }
+
+        static void UpdateSupplierInRecords(SupplierRecordArray supplierRecords)
+        {
+            Console.Clear();
+
+            Console.WriteLine("UPDATE SUPPLIER");
+            Console.WriteLine("===============");
+            Console.Write("Enter supplier ID to update: ");
+
+            string supplierId = Console.ReadLine() ?? "";
+
+            Supplier? supplier = supplierRecords.SearchBySupplierId(supplierId);
+
+            if (supplier == null)
+            {
+                Console.WriteLine("No supplier with this ID was found.");
+                Pause();
+                return;
+            }
+
+            Console.WriteLine();
+            Console.WriteLine("Current supplier details:");
+            Console.WriteLine($"Name: {supplier.SupplierName}");
+            Console.WriteLine($"Contact Number: {supplier.ContactNumber}");
+            Console.WriteLine($"Email: {supplier.Email}");
+            Console.WriteLine();
+
+            Console.Write("Enter new supplier name: ");
+            supplier.SupplierName = Console.ReadLine() ?? "";
+
+            Console.Write("Enter new contact number: ");
+            supplier.ContactNumber = Console.ReadLine() ?? "";
+
+            Console.Write("Enter new email: ");
+            supplier.Email = Console.ReadLine() ?? "";
+
+            Console.WriteLine();
+            Console.WriteLine("Supplier was updated successfully.");
+            Pause();
+        }
+
+        static void RemoveSupplierFromRecords(SupplierRecordArray supplierRecords)
+        {
+            Console.Clear();
+
+            Console.WriteLine("REMOVE SUPPLIER");
+            Console.WriteLine("===============");
+            Console.Write("Enter supplier ID to remove: ");
+
+            string supplierId = Console.ReadLine() ?? "";
+
+            bool removed = supplierRecords.RemoveSupplier(supplierId);
+
+            Console.WriteLine();
+
+            if (removed)
+            {
+                Console.WriteLine("Supplier was removed successfully.");
+            }
+            else
+            {
+                Console.WriteLine("No supplier with this ID was found.");
             }
 
             Pause();

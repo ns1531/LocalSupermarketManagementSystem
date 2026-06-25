@@ -11,6 +11,7 @@ namespace SupermarketManagementSystem
         {
             ProductCatalogueArray productCatalogue = CreateSampleProducts();
             BarcodeIndexTable barcodeIndex = CreateBarcodeIndex(productCatalogue);
+            SupplierRecordArray supplierRecords = CreateSampleSuppliers();
 
             bool running = true;
 
@@ -39,7 +40,7 @@ namespace SupermarketManagementSystem
                         break;
 
                     case "2":
-                        ShowSectionPlaceholder("Supplier Records");
+                        ShowSupplierRecordsMenu(supplierRecords);
                         break;
 
                     case "3":
@@ -119,6 +120,72 @@ namespace SupermarketManagementSystem
                         break;
                 }
             }
+        }
+
+        static void ShowSupplierRecordsMenu(SupplierRecordArray supplierRecords)
+        {
+            bool inSupplierMenu = true;
+
+            while (inSupplierMenu)
+            {
+                Console.Clear();
+
+                Console.WriteLine("SUPPLIER RECORDS");
+                Console.WriteLine("================");
+                Console.WriteLine("1. View All Suppliers");
+                Console.WriteLine("2. Back to Main Menu");
+                Console.WriteLine();
+                Console.Write("Choose an option (1 or 2): ");
+
+                string choice = Console.ReadLine() ?? "";
+
+                switch (choice)
+                {
+                    case "1":
+                        ViewAllSuppliers(supplierRecords);
+                        break;
+
+                    case "2":
+                        inSupplierMenu = false;
+                        break;
+
+                    default:
+                        Console.WriteLine("Invalid input! Please choose 1 or 2.");
+                        Pause();
+                        break;
+                }
+            }
+        }
+
+        static void ViewAllSuppliers(SupplierRecordArray supplierRecords)
+        {
+            Console.Clear();
+
+            Console.WriteLine("ALL SUPPLIERS");
+            Console.WriteLine("=============");
+
+            if (supplierRecords.Count == 0)
+            {
+                Console.WriteLine("No suppliers were found.");
+                Pause();
+                return;
+            }
+
+            for (int i = 0; i < supplierRecords.Count; i++)
+            {
+                Supplier? supplier = supplierRecords.GetSupplierAt(i);
+
+                if (supplier != null)
+                {
+                    Console.WriteLine($"ID: {supplier.SupplierId}");
+                    Console.WriteLine($"Name: {supplier.SupplierName}");
+                    Console.WriteLine($"Contact Number: {supplier.ContactNumber}");
+                    Console.WriteLine($"Email: {supplier.Email}");
+                    Console.WriteLine("-----------------------------------");
+                }
+            }
+
+            Pause();
         }
 
         static void AddProductToCatalogue(ProductCatalogueArray productCatalogue, BarcodeIndexTable barcodeIndex)
@@ -667,6 +734,45 @@ namespace SupermarketManagementSystem
             });
 
             return productCatalogue;
+        }
+
+        static SupplierRecordArray CreateSampleSuppliers()
+        {
+            SupplierRecordArray supplierRecords = new SupplierRecordArray();
+
+            supplierRecords.AddSupplier(new Supplier
+            {
+                SupplierId = "S001",
+                SupplierName = "Phoenix Beverages Ltd",
+                ContactNumber = "2123456",
+                Email = "orders@phoenixbeverages.mu"
+            });
+
+            supplierRecords.AddSupplier(new Supplier
+            {
+                SupplierId = "S002",
+                SupplierName = "Apollo Foods Ltd",
+                ContactNumber = "2345678",
+                Email = "sales@apollofoods.mu"
+            });
+
+            supplierRecords.AddSupplier(new Supplier
+            {
+                SupplierId = "S003",
+                SupplierName = "Local Bakery Supplier",
+                ContactNumber = "2456789",
+                Email = "orders@localbakery.mu"
+            });
+
+            supplierRecords.AddSupplier(new Supplier
+            {
+                SupplierId = "S004",
+                SupplierName = "Snack and Grocery Supplies Ltd",
+                ContactNumber = "2567890",
+                Email = "contact@snackgrocery.mu"
+            });
+
+            return supplierRecords;
         }
 
         static void ShowSectionPlaceholder(string sectionName)

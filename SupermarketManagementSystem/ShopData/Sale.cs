@@ -9,5 +9,6 @@ namespace SupermarketManagementSystem.ShopData
         public string SaleId { get; set; } = "";
         public DateTime SaleDate { get; set; }
         public decimal TotalAmount { get; set; }
+        public SaleItem Item { get; set; } = new SaleItem();
     }
 }

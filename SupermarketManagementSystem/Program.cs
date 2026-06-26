@@ -12,6 +12,7 @@ namespace SupermarketManagementSystem
             ProductCatalogueArray productCatalogue = CreateSampleProducts();
             BarcodeIndexTable barcodeIndex = CreateBarcodeIndex(productCatalogue);
             SupplierRecordArray supplierRecords = CreateSampleSuppliers();
+            SaleRecordArray saleRecords = new SaleRecordArray();
 
             bool running = true;
 
@@ -52,7 +53,7 @@ namespace SupermarketManagementSystem
                         break;
 
                     case "5":
-                        ShowSectionPlaceholder("Checkout & Sales Records");
+                        ShowCheckoutSalesMenu(productCatalogue, barcodeIndex, saleRecords);
                         break;
 
                     case "6":
@@ -533,6 +534,146 @@ namespace SupermarketManagementSystem
                         break;
                 }
             }
+        }
+
+        static void ShowCheckoutSalesMenu(ProductCatalogueArray productCatalogue, BarcodeIndexTable barcodeIndex, SaleRecordArray saleRecords)
+        {
+            bool inSalesMenu = true;
+
+            while (inSalesMenu)
+            {
+                Console.Clear();
+
+                Console.WriteLine("CHECKOUT & SALES RECORDS");
+                Console.WriteLine("========================");
+                Console.WriteLine("1. Record Sale");
+                Console.WriteLine("2. View Sales Records");
+                Console.WriteLine("3. Back to Main Menu");
+                Console.WriteLine();
+                Console.Write("Choose an option (1 - 3): ");
+
+                string choice = Console.ReadLine() ?? "";
+
+                switch (choice)
+                {
+                    case "1":
+                        RecordSale(barcodeIndex, saleRecords);
+                        break;
+
+                    case "2":
+                        ViewSalesRecords(saleRecords);
+                        break;
+
+                    case "3":
+                        inSalesMenu = false;
+                        break;
+
+                    default:
+                        Console.WriteLine("Invalid input! Please choose a number from 1 to 3.");
+                        Pause();
+                        break;
+                }
+            }
+        }
+
+        static void RecordSale(BarcodeIndexTable barcodeIndex, SaleRecordArray saleRecords)
+        {
+            Console.Clear();
+
+            Console.WriteLine("RECORD SALE");
+            Console.WriteLine("===========");
+            Console.Write("Enter product barcode: ");
+
+            string barcode = Console.ReadLine() ?? "";
+
+            Product? product = barcodeIndex.SearchByBarcode(barcode);
+
+            if (product == null)
+            {
+                Console.WriteLine("No product with this barcode was found.");
+                Pause();
+                return;
+            }
+
+            Console.WriteLine();
+            Console.WriteLine($"Product: {product.Title}");
+            Console.WriteLine($"Price: Rs {product.Price}");
+            Console.WriteLine($"Available Quantity: {product.QuantityInStock}");
+            Console.Write("Enter quantity sold: ");
+
+            int quantitySold = int.Parse(Console.ReadLine() ?? "0");
+
+            if (quantitySold > product.QuantityInStock)
+            {
+                Console.WriteLine("Not enough stock available.");
+                Pause();
+                return;
+            }
+
+            decimal totalAmount = product.Price * quantitySold;
+
+            product.QuantityInStock -= quantitySold;
+
+            SaleItem saleItem = new SaleItem
+            {
+                SaleId = "SALE" + (saleRecords.Count + 1).ToString("000"),
+                ProductId = product.ProductId,
+                ProductTitle = product.Title,
+                QuantitySold = quantitySold,
+                UnitPrice = product.Price,
+                ItemTotal = totalAmount
+            };
+
+            Sale sale = new Sale
+            {
+                SaleId = saleItem.SaleId,
+                SaleDate = DateTime.Now,
+                TotalAmount = totalAmount,
+                Item = saleItem
+            };
+
+            saleRecords.AddSale(sale);
+
+            Console.WriteLine();
+            Console.WriteLine("Sale was recorded successfully.");
+            Console.WriteLine($"Sale ID: {sale.SaleId}");
+            Console.WriteLine($"Total Amount: Rs {sale.TotalAmount}");
+            Pause();
+        }
+
+        static void ViewSalesRecords(SaleRecordArray saleRecords)
+        {
+            Console.Clear();
+
+            Console.WriteLine("SALES RECORDS");
+            Console.WriteLine("=============");
+
+            if (saleRecords.Count == 0)
+            {
+                Console.WriteLine("No sales records were found.");
+                Pause();
+                return;
+            }
+
+            for (int i = 0; i < saleRecords.Count; i++)
+            {
+                Sale? sale = saleRecords.GetSaleAt(i);
+
+                if (sale != null)
+                {
+                    Console.WriteLine($"Sale ID: {sale.SaleId}");
+                    Console.WriteLine($"Date: {sale.SaleDate:dd/MM/yyyy HH:mm}");
+                    Console.WriteLine($"Product ID: {sale.Item.ProductId}");
+                    Console.WriteLine($"Product: {sale.Item.ProductTitle}");
+                    Console.WriteLine($"Quantity Sold: {sale.Item.QuantitySold}");
+                    Console.WriteLine($"Unit Price: Rs {sale.Item.UnitPrice}");
+                    Console.WriteLine($"Item Total: Rs {sale.Item.ItemTotal}");
+                    Console.WriteLine($"Sale Total: Rs {sale.TotalAmount}");
+                    Console.WriteLine("-----------------------------------");
+                }
+            }
+
+            Pause();
         }
 
         static void ViewStockStatus(ProductCatalogueArray productCatalogue)

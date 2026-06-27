@@ -57,7 +57,7 @@ namespace SupermarketManagementSystem
                         break;
 
                     case "6":
-                        ShowSectionPlaceholder("Shop Reports");
+                        ShowShopReportsMenu(productCatalogue, supplierRecords, saleRecords);
                         break;
 
                     case "7":
@@ -574,6 +574,225 @@ namespace SupermarketManagementSystem
                         break;
                 }
             }
+        }
+
+        static void ShowShopReportsMenu(ProductCatalogueArray productCatalogue, SupplierRecordArray supplierRecords, SaleRecordArray saleRecords)
+        {
+            bool inReportsMenu = true;
+
+            while (inReportsMenu)
+            {
+                Console.Clear();
+
+                Console.WriteLine("SHOP REPORTS");
+                Console.WriteLine("============");
+                Console.WriteLine("1. Low Stock Report");
+                Console.WriteLine("2. Products by Category");
+                Console.WriteLine("3. Supplier Stock List");
+                Console.WriteLine("4. Sales by Product");
+                Console.WriteLine("5. Back to Main Menu");
+                Console.WriteLine();
+                Console.Write("Choose an option (1 - 5): ");
+
+                string choice = Console.ReadLine() ?? "";
+
+                switch (choice)
+                {
+                    case "1":
+                        ShowLowStockReport(productCatalogue);
+                        break;
+
+                    case "2":
+                        ShowProductsByCategoryReport(productCatalogue);
+                        break;
+
+                    case "3":
+                        ShowSupplierStockList(productCatalogue, supplierRecords);
+                        break;
+
+                    case "4":
+                        ShowSalesByProductReport(saleRecords);
+                        break;
+
+                    case "5":
+                        inReportsMenu = false;
+                        break;
+
+                    default:
+                        Console.WriteLine("Invalid input! Please choose a number from 1 to 5.");
+                        Pause();
+                        break;
+                }
+            }
+        }
+
+        static void ShowLowStockReport(ProductCatalogueArray productCatalogue)
+        {
+            Console.Clear();
+
+            Console.WriteLine("LOW STOCK REPORT");
+            Console.WriteLine("================");
+
+            bool lowStockFound = false;
+
+            for (int i = 0; i < productCatalogue.Count; i++)
+            {
+                Product? product = productCatalogue.GetProductAt(i);
+
+                if (product != null && product.QuantityInStock <= product.LowStockThreshold)
+                {
+                    Console.WriteLine($"ID: {product.ProductId}");
+                    Console.WriteLine($"Title: {product.Title}");
+                    Console.WriteLine($"Quantity: {product.QuantityInStock}");
+                    Console.WriteLine($"Low Stock Threshold: {product.LowStockThreshold}");
+                    Console.WriteLine($"Status: {product.StockStatus}");
+                    Console.WriteLine("-----------------------------------");
+
+                    lowStockFound = true;
+                }
+            }
+
+            if (!lowStockFound)
+            {
+                Console.WriteLine("No low stock products were found.");
+            }
+
+            Pause();
+        }
+
+        static void ShowProductsByCategoryReport(ProductCatalogueArray productCatalogue)
+        {
+            Console.Clear();
+
+            Console.WriteLine("PRODUCTS BY CATEGORY");
+            Console.WriteLine("====================");
+            Console.Write("Enter category ID: ");
+
+            string categoryId = Console.ReadLine() ?? "";
+
+            Console.WriteLine();
+
+            bool productsFound = false;
+
+            for (int i = 0; i < productCatalogue.Count; i++)
+            {
+                Product? product = productCatalogue.GetProductAt(i);
+
+                if (product != null && product.CategoryId == categoryId)
+                {
+                    DisplayProductDetails(product);
+                    Console.WriteLine("-----------------------------------");
+
+                    productsFound = true;
+                }
+            }
+
+            if (!productsFound)
+            {
+                Console.WriteLine("No products were found for this category.");
+            }
+
+            Pause();
+        }
+
+        static void ShowSupplierStockList(ProductCatalogueArray productCatalogue, SupplierRecordArray supplierRecords)
+        {
+            Console.Clear();
+
+            Console.WriteLine("SUPPLIER STOCK LIST");
+            Console.WriteLine("===================");
+            Console.Write("Enter supplier ID: ");
+
+            string supplierId = Console.ReadLine() ?? "";
+
+            Supplier? supplier = supplierRecords.SearchBySupplierId(supplierId);
+
+            Console.WriteLine();
+
+            if (supplier == null)
+            {
+                Console.WriteLine("No supplier with this ID was found.");
+                Pause();
+                return;
+            }
+
+            Console.WriteLine($"Supplier: {supplier.SupplierName}");
+            Console.WriteLine($"Contact Number: {supplier.ContactNumber}");
+            Console.WriteLine($"Email: {supplier.Email}");
+            Console.WriteLine();
+
+            bool productsFound = false;
+
+            for (int i = 0; i < productCatalogue.Count; i++)
+            {
+                Product? product = productCatalogue.GetProductAt(i);
+
+                if (product != null && product.SupplierId == supplierId)
+                {
+                    Console.WriteLine($"Product ID: {product.ProductId}");
+                    Console.WriteLine($"Title: {product.Title}");
+                    Console.WriteLine($"Quantity: {product.QuantityInStock}");
+                    Console.WriteLine($"Status: {product.StockStatus}");
+                    Console.WriteLine("-----------------------------------");
+
+                    productsFound = true;
+                }
+            }
+
+            if (!productsFound)
+            {
+                Console.WriteLine("No products were found for this supplier.");
+            }
+
+            Pause();
+        }
+
+        static void ShowSalesByProductReport(SaleRecordArray saleRecords)
+        {
+            Console.Clear();
+
+            Console.WriteLine("SALES BY PRODUCT");
+            Console.WriteLine("================");
+            Console.Write("Enter product ID: ");
+
+            string productId = Console.ReadLine() ?? "";
+
+            Console.WriteLine();
+
+            int totalQuantitySold = 0;
+            decimal totalSalesAmount = 0;
+            bool salesFound = false;
+
+            for (int i = 0; i < saleRecords.Count; i++)
+            {
+                Sale? sale = saleRecords.GetSaleAt(i);
+
+                if (sale != null && sale.Item.ProductId == productId)
+                {
+                    Console.WriteLine($"Sale ID: {sale.SaleId}");
+                    Console.WriteLine($"Date: {sale.SaleDate:dd/MM/yyyy HH:mm}");
+                    Console.WriteLine($"Product: {sale.Item.ProductTitle}");
+                    Console.WriteLine($"Quantity Sold: {sale.Item.QuantitySold}");
+                    Console.WriteLine($"Item Total: Rs {sale.Item.ItemTotal}");
+                    Console.WriteLine("-----------------------------------");
+
+                    totalQuantitySold += sale.Item.QuantitySold;
+                    totalSalesAmount += sale.Item.ItemTotal;
+                    salesFound = true;
+                }
+            }
+
+            if (!salesFound)
+            {
+                Console.WriteLine("No sales records were found for this product.");
+            }
+            else
+            {
+                Console.WriteLine($"Total Quantity Sold: {totalQuantitySold}");
+                Console.WriteLine($"Total Sales Amount: Rs {totalSalesAmount}");
+            }
+
+            Pause();
         }
 
         static void RecordSale(BarcodeIndexTable barcodeIndex, SaleRecordArray saleRecords)

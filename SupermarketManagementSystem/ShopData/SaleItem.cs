@@ -6,6 +6,7 @@ namespace SupermarketManagementSystem.ShopData
 {
     public class SaleItem
     {
+        public int SaleItemId { get; set; }
         public string SaleId { get; set; } = "";
         public string ProductId { get; set; } = "";
         public string ProductTitle { get; set; } = "";

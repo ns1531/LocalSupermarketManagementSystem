@@ -21,5 +21,22 @@ namespace SupermarketManagementSystem.ShopDatabase
             optionsBuilder.UseSqlServer(
                 "Server=(localdb)\\MSSQLLocalDB;Database=LocalSupermarketManagementSystem;Trusted_Connection=True;TrustServerCertificate=True;");
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Category>().HasKey(category => category.CategoryId);
+            modelBuilder.Entity<Supplier>().HasKey(supplier => supplier.SupplierId);
+            modelBuilder.Entity<Product>().HasKey(product => product.ProductId);
+            modelBuilder.Entity<Stock>().HasKey(stock => stock.ProductId);
+            modelBuilder.Entity<Sale>().HasKey(sale => sale.SaleId);
+            modelBuilder.Entity<SaleItem>().HasKey(saleItem => saleItem.SaleItemId);
+
+            modelBuilder.Entity<Product>().Ignore(product => product.QuantityInStock);
+            modelBuilder.Entity<Product>().Ignore(product => product.LowStockThreshold);
+            modelBuilder.Entity<Product>().Ignore(product => product.StockStatus);
+
+            modelBuilder.Entity<Sale>().Ignore(sale => sale.Item);
+        }
+
     }
 }

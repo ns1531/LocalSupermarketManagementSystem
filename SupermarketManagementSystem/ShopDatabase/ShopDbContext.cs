@@ -12,6 +12,7 @@ namespace SupermarketManagementSystem.ShopDatabase
         public DbSet<Product> Products { get; set; } = null!;
         public DbSet<Category> Categories { get; set; } = null!;
         public DbSet<Supplier> Suppliers { get; set; } = null!;
+        public DbSet<Stock> Stock { get; set; } = null!;
         public DbSet<Sale> Sales { get; set; } = null!;
         public DbSet<SaleItem> SaleItems { get; set; } = null!;
 

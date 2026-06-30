@@ -13,8 +13,12 @@ namespace SupermarketManagementSystem.ShopDatabase
 
             using ShopDbContext database = new ShopDbContext();
 
-            foreach (Product product in database.Products)
+            Product[] products = database.Products.ToArray();
+
+            for (int i = 0; i < products.Length; i++)
             {
+                Product product = products[i];
+
                 Stock? stock = database.Stock.Find(product.ProductId);
 
                 if (stock != null)

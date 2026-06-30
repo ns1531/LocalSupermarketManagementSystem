@@ -2,6 +2,7 @@
 
 using SupermarketManagementSystem.ShopData;
 using SupermarketManagementSystem.ShopDataStructures;
+using SupermarketManagementSystem.ShopDatabase;
 
 namespace SupermarketManagementSystem
 {
@@ -9,9 +10,9 @@ namespace SupermarketManagementSystem
     {
         static void Main()
         {
-            ProductCatalogueArray productCatalogue = CreateSampleProducts();
+            ProductCatalogueArray productCatalogue = ShopDataLoader.LoadProducts();
             BarcodeIndexTable barcodeIndex = CreateBarcodeIndex(productCatalogue);
-            SupplierRecordArray supplierRecords = CreateSampleSuppliers();
+            SupplierRecordArray supplierRecords = ShopDataLoader.LoadSuppliers();
             SaleRecordArray saleRecords = new SaleRecordArray();
 
             bool running = true;
@@ -1139,122 +1140,6 @@ namespace SupermarketManagementSystem
             }
 
             return barcodeIndex;
-        }
-
-        static ProductCatalogueArray CreateSampleProducts()
-        {
-            ProductCatalogueArray productCatalogue = new ProductCatalogueArray();
-
-            productCatalogue.AddProduct(new Product
-            {
-                ProductId = "P001",
-                Barcode = "6091000000011",
-                Title = "Phoenix Drink",
-                Brand = "Phoenix",
-                CategoryId = "C001",
-                SupplierId = "S001",
-                Price = 80,
-                QuantityInStock = 24,
-                LowStockThreshold = 5,
-                RestockDate = DateTime.Today.AddDays(7)
-            });
-
-            productCatalogue.AddProduct(new Product
-            {
-                ProductId = "P002",
-                Barcode = "6091000000028",
-                Title = "Apollo Instant Noodles",
-                Brand = "Apollo",
-                CategoryId = "C002",
-                SupplierId = "S002",
-                Price = 10,
-                QuantityInStock = 12,
-                LowStockThreshold = 6,
-                RestockDate = DateTime.Today.AddDays(5)
-            });
-
-            productCatalogue.AddProduct(new Product
-            {
-                ProductId = "P003",
-                Barcode = "6091000000035",
-                Title = "Bread",
-                Brand = "Bakery",
-                CategoryId = "C003",
-                SupplierId = "S003",
-                Price = 7,
-                QuantityInStock = 8,
-                LowStockThreshold = 4,
-                RestockDate = DateTime.Today.AddDays(2)
-            });
-
-            productCatalogue.AddProduct(new Product
-            {
-                ProductId = "P004",
-                Barcode = "6091000000042",
-                Title = "Doritos Nacho Cheese Flavoured Corn Chips",
-                Brand = "Frito-Lay",
-                CategoryId = "C004",
-                SupplierId = "S004",
-                Price = 45,
-                QuantityInStock = 10,
-                LowStockThreshold = 3,
-                RestockDate = DateTime.Today.AddDays(10)
-            });
-
-            productCatalogue.AddProduct(new Product
-            {
-                ProductId = "P005",
-                Barcode = "6091000000059",
-                Title = "Brown Sugar",
-                Brand = "Dina",
-                CategoryId = "C004",
-                SupplierId = "S004",
-                Price = 90,
-                QuantityInStock = 15,
-                LowStockThreshold = 5,
-                RestockDate = DateTime.Today.AddDays(8)
-            });
-
-            return productCatalogue;
-        }
-
-        static SupplierRecordArray CreateSampleSuppliers()
-        {
-            SupplierRecordArray supplierRecords = new SupplierRecordArray();
-
-            supplierRecords.AddSupplier(new Supplier
-            {
-                SupplierId = "S001",
-                SupplierName = "Phoenix Beverages Ltd",
-                ContactNumber = "2123456",
-                Email = "orders@phoenixbeverages.mu"
-            });
-
-            supplierRecords.AddSupplier(new Supplier
-            {
-                SupplierId = "S002",
-                SupplierName = "Apollo Foods Ltd",
-                ContactNumber = "2345678",
-                Email = "sales@apollofoods.mu"
-            });
-
-            supplierRecords.AddSupplier(new Supplier
-            {
-                SupplierId = "S003",
-                SupplierName = "Local Bakery Supplier",
-                ContactNumber = "2456789",
-                Email = "orders@localbakery.mu"
-            });
-
-            supplierRecords.AddSupplier(new Supplier
-            {
-                SupplierId = "S004",
-                SupplierName = "Snack and Grocery Supplies Ltd",
-                ContactNumber = "2567890",
-                Email = "contact@snackgrocery.mu"
-            });
-
-            return supplierRecords;
         }
 
         static void ShowSectionPlaceholder(string sectionName)

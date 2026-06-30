@@ -15,6 +15,11 @@ namespace SupermarketManagementSystem.ShopDataStructures
             products = new Product?[20];
         }
 
+        public void Clear()
+        {
+            products = new Product?[20];
+        }
+
         public void AddProduct(Product product)
         {
             int index = HashBarcode(product.Barcode);

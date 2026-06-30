@@ -121,5 +121,110 @@ namespace SupermarketManagementSystem.ShopDatabase
             database.SaveChanges();
         }
 
+        public static bool SaveProduct(Product product)
+        {
+            using ShopDbContext database = new ShopDbContext();
+
+            if (database.Products.Find(product.ProductId) != null)
+            {
+                return false;
+            }
+
+            if (database.Products.Any(existingProduct => existingProduct.Barcode == product.Barcode))
+            {
+                return false;
+            }
+
+            if (database.Categories.Find(product.CategoryId) == null)
+            {
+                return false;
+            }
+
+            if (database.Suppliers.Find(product.SupplierId) == null)
+            {
+                return false;
+            }
+
+            database.Products.Add(new Product
+            {
+                ProductId = product.ProductId,
+                Barcode = product.Barcode,
+                Title = product.Title,
+                Brand = product.Brand,
+                CategoryId = product.CategoryId,
+                SupplierId = product.SupplierId,
+                Price = product.Price,
+                RestockDate = product.RestockDate
+            });
+
+            database.Stock.Add(new Stock
+            {
+                ProductId = product.ProductId,
+                QuantityInStock = product.QuantityInStock,
+                LowStockThreshold = product.LowStockThreshold
+            });
+
+            database.SaveChanges();
+            return true;
+        }
+
+        public static bool UpdateProduct(Product product)
+        {
+            using ShopDbContext database = new ShopDbContext();
+
+            Product? databaseProduct = database.Products.Find(product.ProductId);
+            Stock? databaseStock = database.Stock.Find(product.ProductId);
+
+            if (databaseProduct == null || databaseStock == null)
+            {
+                return false;
+            }
+
+            databaseProduct.Title = product.Title;
+            databaseProduct.Brand = product.Brand;
+            databaseProduct.CategoryId = product.CategoryId;
+            databaseProduct.SupplierId = product.SupplierId;
+            databaseProduct.Price = product.Price;
+            databaseProduct.RestockDate = product.RestockDate;
+
+            databaseStock.QuantityInStock = product.QuantityInStock;
+            databaseStock.LowStockThreshold = product.LowStockThreshold;
+
+            database.SaveChanges();
+            return true;
+        }
+
+        public static bool RemoveProduct(string productId)
+        {
+            using ShopDbContext database = new ShopDbContext();
+
+            bool productHasSales = database.SaleItems.Any(saleItem => saleItem.ProductId == productId);
+
+            if (productHasSales)
+            {
+                return false;
+            }
+
+            Stock? stock = database.Stock.Find(productId);
+
+            if (stock != null)
+            {
+                database.Stock.Remove(stock);
+                database.SaveChanges();
+            }
+
+            Product? product = database.Products.Find(productId);
+
+            if (product == null)
+            {
+                return false;
+            }
+
+            database.Products.Remove(product);
+            database.SaveChanges();
+
+            return true;
+        }
+
     }
 }

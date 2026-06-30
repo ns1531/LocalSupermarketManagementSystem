@@ -109,7 +109,7 @@ namespace SupermarketManagementSystem
                         break;
 
                     case "4":
-                        RemoveProductFromCatalogue(productCatalogue);
+                        RemoveProductFromCatalogue(productCatalogue, barcodeIndex);
                         break;
 
                     case "5":
@@ -373,6 +373,16 @@ namespace SupermarketManagementSystem
                 RestockDate = DateTime.Today.AddDays(7)
             };
 
+            bool saved = ShopDataLoader.SaveProduct(product);
+
+            if (!saved)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Product could not be saved to the database.");
+                Pause();
+                return;
+            }
+
             productCatalogue.AddProduct(product);
             barcodeIndex.AddProduct(product);
 
@@ -416,12 +426,18 @@ namespace SupermarketManagementSystem
             Console.Write("Enter new quantity in stock: ");
             product.QuantityInStock = int.Parse(Console.ReadLine() ?? "0");
 
-            Console.WriteLine();
-            Console.WriteLine("Product was updated successfully.");
-            Pause();
+            bool updated = ShopDataLoader.UpdateProduct(product);
+
+            if (!updated)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Product could not be updated in the database.");
+                Pause();
+                return;
+            }
         }
 
-        static void RemoveProductFromCatalogue(ProductCatalogueArray productCatalogue)
+        static void RemoveProductFromCatalogue(ProductCatalogueArray productCatalogue, BarcodeIndexTable barcodeIndex)
         {
             Console.Clear();
 
@@ -431,17 +447,33 @@ namespace SupermarketManagementSystem
 
             string productId = Console.ReadLine() ?? "";
 
-            bool removed = productCatalogue.RemoveProduct(productId);
+            bool removedFromDatabase = ShopDataLoader.RemoveProduct(productId);
+
+            if (!removedFromDatabase)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Product could not be removed from the database.");
+                Console.WriteLine("It may not exist, or it may already be linked to sales records.");
+                Pause();
+                return;
+            }
+
+            bool removedFromCatalogue = productCatalogue.RemoveProduct(productId);
+
+            if (removedFromCatalogue)
+            {
+                RebuildBarcodeIndex(productCatalogue, barcodeIndex);
+            }
 
             Console.WriteLine();
 
-            if (removed)
+            if (removedFromCatalogue)
             {
                 Console.WriteLine("Product was removed successfully.");
             }
             else
             {
-                Console.WriteLine("No product with this ID was found.");
+                Console.WriteLine("Product was removed from the database, but was not found in the current catalogue.");
             }
 
             Pause();
@@ -1141,6 +1173,21 @@ namespace SupermarketManagementSystem
             }
 
             return barcodeIndex;
+        }
+
+        static void RebuildBarcodeIndex(ProductCatalogueArray productCatalogue, BarcodeIndexTable barcodeIndex)
+        {
+            barcodeIndex.Clear();
+
+            for (int i = 0; i < productCatalogue.Count; i++)
+            {
+                Product? product = productCatalogue.GetProductAt(i);
+
+                if (product != null)
+                {
+                    barcodeIndex.AddProduct(product);
+                }
+            }
         }
 
         static void ShowSectionPlaceholder(string sectionName)

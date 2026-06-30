@@ -239,6 +239,16 @@ namespace SupermarketManagementSystem
                 Email = email
             };
 
+            bool saved = ShopDataLoader.SaveSupplier(supplier);
+
+            if (!saved)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Supplier could not be saved to the database.");
+                Pause();
+                return;
+            }
+
             supplierRecords.AddSupplier(supplier);
 
             Console.WriteLine();
@@ -281,6 +291,16 @@ namespace SupermarketManagementSystem
             Console.Write("Enter new email: ");
             supplier.Email = Console.ReadLine() ?? "";
 
+            bool updated = ShopDataLoader.UpdateSupplier(supplier);
+
+            if (!updated)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Supplier could not be updated in the database.");
+                Pause();
+                return;
+            }
+
             Console.WriteLine();
             Console.WriteLine("Supplier was updated successfully.");
             Pause();
@@ -296,17 +316,28 @@ namespace SupermarketManagementSystem
 
             string supplierId = Console.ReadLine() ?? "";
 
-            bool removed = supplierRecords.RemoveSupplier(supplierId);
+            bool removedFromDatabase = ShopDataLoader.RemoveSupplier(supplierId);
+
+            if (!removedFromDatabase)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Supplier could not be removed from the database.");
+                Console.WriteLine("It may not exist, or it may already be linked to product records.");
+                Pause();
+                return;
+            }
+
+            bool removedFromRecords = supplierRecords.RemoveSupplier(supplierId);
 
             Console.WriteLine();
 
-            if (removed)
+            if (removedFromRecords)
             {
                 Console.WriteLine("Supplier was removed successfully.");
             }
             else
             {
-                Console.WriteLine("No supplier with this ID was found.");
+                Console.WriteLine("Supplier was removed from the database, but was not found in the current records.");
             }
 
             Pause();

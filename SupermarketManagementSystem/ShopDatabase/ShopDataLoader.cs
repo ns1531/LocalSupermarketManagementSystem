@@ -226,5 +226,69 @@ namespace SupermarketManagementSystem.ShopDatabase
             return true;
         }
 
+        public static bool SaveSupplier(Supplier supplier)
+        {
+            using ShopDbContext database = new ShopDbContext();
+
+            if (database.Suppliers.Find(supplier.SupplierId) != null)
+            {
+                return false;
+            }
+
+            database.Suppliers.Add(new Supplier
+            {
+                SupplierId = supplier.SupplierId,
+                SupplierName = supplier.SupplierName,
+                ContactNumber = supplier.ContactNumber,
+                Email = supplier.Email
+            });
+
+            database.SaveChanges();
+            return true;
+        }
+
+        public static bool UpdateSupplier(Supplier supplier)
+        {
+            using ShopDbContext database = new ShopDbContext();
+
+            Supplier? databaseSupplier = database.Suppliers.Find(supplier.SupplierId);
+
+            if (databaseSupplier == null)
+            {
+                return false;
+            }
+
+            databaseSupplier.SupplierName = supplier.SupplierName;
+            databaseSupplier.ContactNumber = supplier.ContactNumber;
+            databaseSupplier.Email = supplier.Email;
+
+            database.SaveChanges();
+            return true;
+        }
+
+        public static bool RemoveSupplier(string supplierId)
+        {
+            using ShopDbContext database = new ShopDbContext();
+
+            bool supplierHasProducts = database.Products.Any(product => product.SupplierId == supplierId);
+
+            if (supplierHasProducts)
+            {
+                return false;
+            }
+
+            Supplier? supplier = database.Suppliers.Find(supplierId);
+
+            if (supplier == null)
+            {
+                return false;
+            }
+
+            database.Suppliers.Remove(supplier);
+            database.SaveChanges();
+
+            return true;
+        }
+
     }
 }

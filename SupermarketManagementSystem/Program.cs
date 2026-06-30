@@ -13,7 +13,7 @@ namespace SupermarketManagementSystem
             ProductCatalogueArray productCatalogue = ShopDataLoader.LoadProducts();
             BarcodeIndexTable barcodeIndex = CreateBarcodeIndex(productCatalogue);
             SupplierRecordArray supplierRecords = ShopDataLoader.LoadSuppliers();
-            SaleRecordArray saleRecords = new SaleRecordArray();
+            SaleRecordArray saleRecords = ShopDataLoader.LoadSales();
 
             bool running = true;
 
@@ -832,8 +832,6 @@ namespace SupermarketManagementSystem
 
             decimal totalAmount = product.Price * quantitySold;
 
-            product.QuantityInStock -= quantitySold;
-
             SaleItem saleItem = new SaleItem
             {
                 SaleId = "SALE" + (saleRecords.Count + 1).ToString("000"),
@@ -852,7 +850,9 @@ namespace SupermarketManagementSystem
                 Item = saleItem
             };
 
+            product.QuantityInStock -= quantitySold;
             saleRecords.AddSale(sale);
+            ShopDataLoader.SaveSale(sale);
 
             Console.WriteLine();
             Console.WriteLine("Sale was recorded successfully.");
@@ -955,6 +955,7 @@ namespace SupermarketManagementSystem
             int newQuantity = int.Parse(Console.ReadLine() ?? "0");
 
             product.QuantityInStock = newQuantity;
+            ShopDataLoader.UpdateStockQuantity(product.ProductId, newQuantity);
 
             Console.WriteLine();
             Console.WriteLine("Stock quantity was updated successfully.");

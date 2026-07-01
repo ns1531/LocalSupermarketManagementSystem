@@ -33,6 +33,33 @@ namespace SupermarketManagementSystem.Tests
         }
 
         [Fact]
+        public void ProductCatalogueArray_ShouldFindProductByName()
+        {
+            ProductCatalogueArray catalogue = new ProductCatalogueArray();
+
+            Product product = new Product
+            {
+                ProductId = "P103",
+                Barcode = "B103",
+                Title = "Chocolate Biscuit",
+                Brand = "Test Brand",
+                CategoryId = "C004",
+                SupplierId = "S004",
+                Price = 30,
+                QuantityInStock = 12,
+                LowStockThreshold = 4,
+                RestockDate = DateTime.Today
+            };
+
+            catalogue.AddProduct(product);
+
+            Product? foundProduct = catalogue.SearchByName("Chocolate");
+
+            Assert.NotNull(foundProduct);
+            Assert.Equal("Chocolate Biscuit", foundProduct.Title);
+        }
+
+        [Fact]
         public void ProductCatalogueArray_ShouldRemoveProduct()
         {
             ProductCatalogueArray catalogue = new ProductCatalogueArray();
@@ -61,6 +88,16 @@ namespace SupermarketManagementSystem.Tests
         }
 
         [Fact]
+        public void ProductCatalogueArray_ShouldReturnFalseWhenRemovingMissingProduct()
+        {
+            ProductCatalogueArray catalogue = new ProductCatalogueArray();
+
+            bool removed = catalogue.RemoveProduct("P999");
+
+            Assert.False(removed);
+        }
+
+        [Fact]
         public void BarcodeIndexTable_ShouldFindProductByBarcode()
         {
             BarcodeIndexTable barcodeIndex = new BarcodeIndexTable();
@@ -85,6 +122,16 @@ namespace SupermarketManagementSystem.Tests
 
             Assert.NotNull(foundProduct);
             Assert.Equal("P102", foundProduct.ProductId);
+        }
+
+        [Fact]
+        public void BarcodeIndexTable_ShouldReturnNullForMissingBarcode()
+        {
+            BarcodeIndexTable barcodeIndex = new BarcodeIndexTable();
+
+            Product? foundProduct = barcodeIndex.SearchByBarcode("B999");
+
+            Assert.Null(foundProduct);
         }
 
         [Fact]
@@ -128,6 +175,16 @@ namespace SupermarketManagementSystem.Tests
 
             Assert.True(removed);
             Assert.Null(foundSupplier);
+        }
+
+        [Fact]
+        public void SupplierRecordArray_ShouldReturnFalseWhenRemovingMissingSupplier()
+        {
+            SupplierRecordArray supplierRecords = new SupplierRecordArray();
+
+            bool removed = supplierRecords.RemoveSupplier("S999");
+
+            Assert.False(removed);
         }
 
         [Fact]
